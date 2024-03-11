@@ -15,3 +15,27 @@ const db = mysql.connectionMade(
     },
     console.log('Connection to staff_db database has been established')
 );
+
+app.use(express.urlencoded({ extended:false }));
+app.use(express.json());
+
+const init = () => {
+    inquirer 
+        .prompt([
+            {
+                type: "list",
+                message: "Please select from the following options:",
+                name: "initialize",
+                choices: [
+                    "View all departments",
+                    "View all roles",
+                    "View all employess",
+                    "Add a department",
+                    "Add a role",
+                    "Add an employee",
+                    "Update an employyee role",
+                    "Exit "
+                ]
+            }
+        ])
+}
