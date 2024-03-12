@@ -53,7 +53,7 @@ function starterPrompt() {
           addDepartment();
           break;
         case "Add Role":
-          addRole();
+          addRoles();
           break;
         case "Add Employee":
           addEmployee();
@@ -131,6 +131,82 @@ function addDepartment() {
         );
      });
 }
+function addRoles() {
+    const departmentOption = [];
+  
+    //This gets all of the departments from the database and populates and array with the values and IDs 
+    //This array is later used for the choices in the list that is prompted to the user
+    db.query("SELECT * FROM departments;", function (err, results) {
+      if(err) throw err;
+      results.forEach((department) => {
+        let departmentPost = {
+          name: department.name,
+          value: department.id,
+        };
+        departmentOption.push(departmentOption);
+      });
+  
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            message: "What is the new role?",
+            name: "roleTitle",
+          },
+          {
+            type: "input",
+            message: "Whats the salary of the new role?",
+            name: "salary",
+          },
+          {
+            type: "list",
+            message: "Which department does the role belong to?",
+            name: "department",
+            choices: departmentOption,
+          },
+        ])
+        .then(function (response) {
+          db.query(
+            `INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?);`,
+            [response.roleTitle, response.salary, response.department],
+            function (err, results) {
+              console.log("Added " + response.roleTitle + " to the database");
+              starterPrompt();
+            }
+          );
+        });
+    });
+  }
+  function addEmployee() {
+
+  inquirer
+  .prompt([
+    {
+      type: "input",
+      message: "Whats the employees first name?",
+      name: "firstName",
+    },
+    {
+      type: "input",
+      message: "Whats the employees last name?",
+      name: "lastName",
+    },
+  ])
+  .then(function (response) {
+    db.query(
+      "INSERT INTO employees (first_name, last_name,) VALUES (?, ?,);",
+      [
+        response.firstName,
+        response.lastName,
+      ],
+      function (err, results) {
+        if(err) throw err;
+        console.log("Added " + response.firstName + " " + response.lastName + " to the database");
+        starterPrompt();
+      }
+    );
+  });
+  }
 
 
         
