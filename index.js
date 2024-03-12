@@ -85,7 +85,7 @@ const init = () => {
         })
     };
 
-    const addDepartment = () => {
+const addDepartment = () => {
         inquirer
         .prompt([
             {
@@ -108,6 +108,47 @@ const init = () => {
             )
         })
 };
+
+const addRoles = () => {
+    const deptChoices = () => db.promise().query(`SELECT * FROM department`)
+        .then((rows) => {
+            let newNames = rows[0].map(obj => obj.name);
+            return newNames
+        })
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                message: "What is the title of the role you'd like to add?",
+                name: "roleTitle"
+            },
+            {
+                type: "input",
+                message: "What is the salary for this role?",
+                name: "salary"
+            },
+            {
+                type: "list",
+                message: "Which department is this role in?",
+                name: "department",
+                choices: deptChoices
+            }
+        ]).then(ans => {
+            db.promise().query(`SELECT id FROM department WHERE name = ?`, ans.addDept)
+                .then(answer => {
+                    let mappedId = answer[0].map(obj => obj.id);
+                    // console.log(mappedId[0])
+                    return mappedId[0]
+                })
+                .then((mappedId) => {
+                    db.promise().query(`INSERT INTO roles(title, salary, department_id)
+                VALUES(?, ?, ?)`, [ans.roleTitle, ans.salary, mappedId]);
+                    init()
+                })
+        })
+};
+
+
         }
             )
 }
