@@ -71,7 +71,43 @@ const init = () => {
         })
     };
 
-    
+    const viewRoles = () => {
+        db.query(`SELECT * FROM department`, (err, results) => {
+            err? console.error(err) : console.table(results);
+            init();
+        })
+    };
+
+    const viewEmployees = () => {
+        db.query(`SELECT * FROM department`, (err, results) => {
+            err? console.error(err) : console.table(results);
+            init();
+        })
+    };
+
+    const addDepartment = () => {
+        inquirer
+        .prompt([
+            {
+                type: "input",
+                message: "Whats the name of the department you wish to add?",
+                name: "addDepartment"
+            }
+        ]).then(ans => {
+            db.query(`INSERT INTO department(name)
+                    VALUES(?)`, ans.addDepartment, (err, results) => {
+                if (err) {
+                    console.log(err)
+                } else {
+                    db.query(`SELECT * FROM department`, (err, results) => {
+                        err ? console.error(err) : console.table(results);
+                        init();
+                    })
+                }
+            }
+            )
+        })
+};
         }
             )
 }
