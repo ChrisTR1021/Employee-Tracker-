@@ -111,6 +111,28 @@ LEFT JOIN employees manager ON manager.id=employees.manager_id`,
         });
 }
 
+// new department creation
+function addDepartment() {
+    inquirer
+    .prompt({
+       type: "input",
+       message: "what is the name of the department?",
+       name: "departmentName", 
+    })
+    .then(function(response) {
+      db.query(
+        "INSERT INTO departments (id, name) Values (?);",
+        [response.departmentName],
+        function (err, results) {
+            if(err) throw err;
+            console.log("Added " + response.departmentName + "to the database");
+            starterPrompt();
+        }
+        );
+     });
+}
+
+
         
     
 
