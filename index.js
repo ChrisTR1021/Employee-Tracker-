@@ -83,3 +83,34 @@ db.query(
     ); 
 }
 
+//Pulls all roles
+function viewRoles() {
+db.query("SELECT * FROM roles", function(err, results) {
+    if (err) throw err;
+    console.table(results);
+    starterPrompt();
+});
+}
+function viewEmployees() {
+    db.query(
+        `SELECT employees.id,
+        employees.first_name,
+        employees.last_name,
+        roles.title,
+        departments.name,
+        roles.salary,
+        concat(manager.first_name, " ", manager.last_name)
+                  AS manager FROM employees
+                  LEFT JOIN roles ON employees.role_id=roles.id
+                  LEFT JOIN departments ON roles.department_id=departments.id
+LEFT JOIN employees manager ON manager.id=employees.manager_id`,
+        function (err, results) {
+            if(err) throw err;
+            console.table(results);
+            starterPrompt
+        });
+}
+
+        
+    
+
