@@ -3,202 +3,83 @@ const mysql = require("mysql12");
 const express = require("express");
 
 const app = express();
-const PORT = process.env.Port || 3001;
+const PORT = process.env.PORT || 3001;
 
 // connection for database
 const db = mysql.connectionMade(
   {
     host: "localhost",
     user: "root",
-    password: "",
+    password: "9999",
     database: "staff_db",
   },
   console.log("Connection to staff_db database has been established")
 );
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-
-const init = () => {
-  inquirer
+// starter prompt  of what user sees and what actions they can take
+function starterPrompt() {
+    inquirer
     .prompt([
       {
         type: "list",
-        message: "Please select from the following options:",
-        name: "initialize",
+        message: "Select from the following options?",
+        name: "choice",
         choices: [
-          "View all departments",
-          "View all roles",
-          "View all employess",
-          "Add a department",
-          "Add a role",
-          "Add an employee",
-          "Update an employyee role",
-          "Exit ",
+          "View All Departments",
+          "View All Roles",
+          "View All Employees",
+          "Add a Department",
+          "Add a Role",
+          "Add an Employee",
+          "Update an Employee Role",
+          "Quit",
         ],
       },
     ])
-    .then((ans) => {
-      //ans. initialize
-      switch (ans.initialize) {
-        case "View all departments":
-          viewDepartment();
+    .then((response) => {
+
+      switch (response.choice) {
+        case "View Departments":
+          viewDepartments();
           break;
-        case "View all roles":
+        case "View Roles":
           viewRoles();
           break;
-        case "View all employees":
+        case "View Employees":
           viewEmployees();
           break;
-        case "Add a department":
+        case "Add Department":
           addDepartment();
           break;
-        case "Add a role":
-          addRoles();
+        case "Add Role":
+          addRole();
           break;
-        case "Add an employee":
+        case "Add Employee":
           addEmployee();
           break;
-        case "Update an employee role":
+        case "Update Role":
           updateEmployee();
           break;
-        case "Exit":
-          console.log("Thank you very much!");
-          process.exit();
+        case "Quit":
+          quitTracker();
+          break;
       }
-    })
-    .catch((err) => console.error(err));
-};
+    });
+}
 
-init();
+//Initializes the starter prompts and options available
+starterPrompt();
 
-const viewDepartment = () => {
-  db.query(`SELECT * FROM department`, (err, results) => {
-    err ? console.error(err) : console.table(results);
-    init();
-  });
-};
-
-const viewRoles = () => {
-  db.query(`SELECT * FROM department`, (err, results) => {
-    err ? console.error(err) : console.table(results);
-    init();
-  });
-};
-
-const viewEmployees = () => {
-  db.query(`SELECT * FROM department`, (err, results) => {
-    err ? console.error(err) : console.table(results);
-    init();
-  });
-};
-
-const addDepartment = () => {
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        message: "Whats the name of the department you wish to add?",
-        name: "addDepartment",
-      },
-    ])
-    .then((ans) => {
-      db.query(
-        `INSERT INTO department(name)
-                    VALUES(?)`,
-        ans.addDepartment,
-        (err, results) => {
-          if (err) {
-            console.log(err);
-          } else {
-            db.query(`SELECT * FROM department`, (err, results) => {
-              err ? console.error(err) : console.table(results);
-              init();
-            });
-          }
+function viewDepartments() {
+db.query(
+    "SELECT id as ID, name as Department from departments option",
+    function (err, results) {
+        if(err) throw err;
+        console.log("\n");
+        console.table(results);
+        starterPrompt();
         }
-      );
-    });
-};
-
-const addRoles = () => {
-  const deptChoices = () =>
-    db
-      .promise()
-      .query(`SELECT * FROM department`)
-      .then((rows) => {
-        let newNames = rows[0].map((obj) => obj.name);
-        return newNames;
-      });
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        message: "What is the title of the role you'd like to add?",
-        name: "roleTitle",
-      },
-      {
-        type: "input",
-        message: "What is the salary for this role?",
-        name: "salary",
-      },
-      {
-        type: "list",
-        message: "Which department is this role in?",
-        name: "department",
-        choices: deptChoices,
-      },
-    ])
-    .then((ans) => {
-      db.promise()
-        .query(`SELECT id FROM department WHERE name = ?`, ans.addDept)
-        .then((answer) => {
-          let mappedId = answer[0].map((obj) => obj.id);
-          // console.log(mappedId[0])
-          return mappedId[0];
-        })
-        .then((mappedId) => {
-          db.promise().query(
-            `INSERT INTO roles(title, salary, department_id)
-                VALUES(?, ?, ?)`,
-            [ans.roleTitle, ans.salary, mappedId]
-          );
-          init();
-        });
-    });
-};
-
-const addEmployee = () => {
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        message: "Whats the employee's first name?",
-        name: "firstName",
-      },
-      {
-        type: "input",
-        message: "Whats the employee's last name?",
-        name: "lastName",
-      },
-      {
-        type: "list",
-        message: "What is the employee's role?",
-        name: "employeeRole",
-        choices: roleChoices,
-      },
-    ])
-    .then((ans) => {
-      db.query(
-        `INSERT INTO employees(first_name, last_name)
-                    VALUES(?, ?)`,
-        [ans.firstName, ans.lastName],
-        (err, results) => {
-          if (err) {
-            console.log(err);
-          } else {
-            db.query(`SELECT * FROM employees`, (err, results) => {
-              err ? console.error(err) : console.table(results);
-              init();
-            });
+    ); 
+}
 
