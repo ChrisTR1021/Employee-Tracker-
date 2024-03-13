@@ -10,7 +10,7 @@ const db = mysql.connectionMade(
   {
     host: "localhost",
     user: "root",
-    password: "9999",
+    password: "",
     database: "staff_db",
   },
   console.log("Connection to staff_db database has been established")
