@@ -52,3 +52,33 @@ function starterPrompt() {
       }
     });
 }
+function viewEmployees() {
+  const summon = "SELECT * FROM employees";
+  db.query(summon, function(err, res) {
+    if (err) throw err;
+    console.log("Viewing All Employees");
+    console.table(res);
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'choices',
+            message: 'select an option.',
+            choices: [
+                'Main Menu',
+                'Quit'
+            ],
+        }
+      ])
+    })
+  }
+  then((answer) => {
+    switch (answer.choices) {
+        case 'Main Menu':
+            start();
+          break;
+          case 'Quit':
+              Quit();
+    }
+})
+  starterPrompt();
+
