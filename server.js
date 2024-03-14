@@ -1,10 +1,20 @@
 const inquirer = require("inquirer");
-const router = express.Router();
+const router = express.router("./index.js");
 const express = require("express");
-const db = require("./db/connection");
+const db = require("./connection");
 const { connection } = require("./db");
-const mysql = require("mysql");
-const { exit } = require("process");
+const mysql = require("");
+const { quit } = require("process");
+
+
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'staff',
+  password: "",
+  });
+   
+  module.exports = connection;
 
 db.connect(async function () {
   starterPrompt();
@@ -77,7 +87,7 @@ function viewEmployees() {
             start();
           break;
           case 'Quit':
-              Quit();
+              quituit();
     }
 })
   starterPrompt();
@@ -107,7 +117,7 @@ function viewEmployees() {
               start();
               break;
           case 'Quit':
-          Quit();
+          quit();
       }
   })
 
@@ -134,7 +144,7 @@ function viewEmployees() {
                    start();
                    break;
                    case 'Quit':
-                       Quit();
+                       quit();
            }
        })
     })
@@ -187,8 +197,16 @@ then(function (response) {
                  start();
                  break;
                  case 'Quit':
-                     Quit();
+                     quit();
          }
      })
   }
 })
+
+function quit() {
+  console.log('Until Next Time');
+  process.exit();
+  
+}
+
+viewEmployees();
