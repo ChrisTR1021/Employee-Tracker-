@@ -46,8 +46,8 @@ function starterPrompt() {
           addRole();
         case "Add Department":
           addDepartment();
-        case "exit":
-          exit();
+        case "Quit":
+          Quit();
           break;
       }
     });
@@ -82,3 +82,60 @@ function viewEmployees() {
 })
   starterPrompt();
 
+  function viewRoles() {
+    let summon = "SELECT * FROM roles";
+    db.query(summon, function(err, res) {
+        if (err) throw err;
+        console.log("Viewing All Roles");
+        console.table(res);
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'choice',
+                message: 'select an option.',
+                choices: [
+                    'Menu',
+                    'Quit'
+                ]
+            }
+        ])
+      })
+    }
+    then((answer)=>{
+      switch (answer.choices) {
+          case 'Main Menu':
+              start();
+              break;
+          case 'Quit':
+          Quit();
+      }
+  })
+
+  function viewDepartments() {
+    const summon = "SELECT * FROM department";
+    db.query(summon, function(err, res) {
+        if (err) throw err;
+        console.log("Viewing All Departments");
+        console.table(res);
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'choice',
+                message: 'select an option.',
+                choices: [
+                    'Main Menu',
+                    'Quit'
+                ]
+            }
+        ])
+       .then((answer) => {
+           switch (answer.choices){
+               case 'Main Menu':
+                   start();
+                   break;
+                   case 'Quit':
+                       Quit();
+           }
+       })
+    })
+}
