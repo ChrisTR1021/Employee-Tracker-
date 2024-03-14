@@ -64,7 +64,7 @@ function viewEmployees() {
             name: 'choices',
             message: 'select an option.',
             choices: [
-                'Main Menu',
+                'Menu',
                 'Quit'
             ],
         }
@@ -73,7 +73,7 @@ function viewEmployees() {
   }
   then((answer) => {
     switch (answer.choices) {
-        case 'Main Menu':
+        case 'Menu':
             start();
           break;
           case 'Quit':
@@ -103,7 +103,7 @@ function viewEmployees() {
     }
     then((answer)=>{
       switch (answer.choices) {
-          case 'Main Menu':
+          case 'Menu':
               start();
               break;
           case 'Quit':
@@ -123,14 +123,14 @@ function viewEmployees() {
                 name: 'choice',
                 message: 'select an option.',
                 choices: [
-                    'Main Menu',
+                    'Menu',
                     'Quit'
                 ]
             }
         ])
        .then((answer) => {
            switch (answer.choices){
-               case 'Main Menu':
+               case 'Menu':
                    start();
                    break;
                    case 'Quit':
@@ -139,3 +139,56 @@ function viewEmployees() {
        })
     })
 }
+function newEmployee() {
+  console.log('Hello! How are you?')
+  inquirer.prompt ([
+      {
+      type: 'input',
+      message: 'Enter employee first name.',
+      name: 'firstName'
+      },
+      {
+          type: 'input',
+          message: 'Enter employee last name.',
+          name: 'lastName'
+      },
+      {
+          type: 'input',
+          message: 'Enter employee ID number',
+          name: 'employeeID'
+      },
+      {
+          type: 'input',
+          message: 'Enter thier managers ID',
+          name: 'managerID'
+      }
+      
+  ])
+}
+then(function (response) {
+  connection.query('INSERT INTO employees(first_name, last_name, roles_id, manager_id) VALUES (?,?,?,?)', 
+  [response.FirstName, response.LastName, response.EmployeeID, response.ManagerID]), function(err,response) {
+      if (err) throw err;
+      console.table(res);
+      inquirer.prompt([
+          {
+              type: 'list',
+              name: 'choice',
+              message: 'select an option.',
+              choices: [
+                  'Menu',
+                  'Quit'
+              ]
+          }
+      ])
+     .then((answer) => {
+         switch (answer.choices){
+             case 'Menu':
+                 start();
+                 break;
+                 case 'Quit':
+                     Quit();
+         }
+     })
+  }
+})
