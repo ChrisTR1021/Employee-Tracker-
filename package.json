@@ -4,23 +4,24 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-      "start": "node server.js",
-      "test": "jest"
+        "start": "node server.js",
+        "test": "jest"
     },
     "repository": {
-      "type": "git",
-      "url": "sql-employee-tracker"
+        "type": "git",
+        "url": "sql-employee-tracker"
     },
     "keywords": [
-      "sql"
+        "sql"
     ],
     "author": "",
     "license": "ISC",
     "dependencies": {
-      "express": "^4.18.2",
-      "inquirer": "^8.2.0",
-      "mongodb": "^6.3.0",
-      "mysql": "^2.18.1",
-      "mysql2": "^3.7.1"
+        "express": "^4.18.2",
+        "inquirer": "^8.2.0",
+        "mongodb": "^6.3.0",
+        "mysql": "^2.18.1",
+        "mysql2": "^3.7.1",
+        "seed": "^0.4.4"
     }
-  }
+}
