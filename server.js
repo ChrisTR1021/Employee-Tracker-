@@ -24,6 +24,9 @@ db.connect((err) => {
   }
     console.log("You're now connected to the database!");
 });
+// commences prompts
+starterPrompt();
+
 
 function starterPrompt() {
   inquirer
@@ -121,7 +124,7 @@ function addRole() {
     });
 
     inquirer
-      starterPrompt([
+      .prompt([
         {
           type: "input",
           message: "Whats the name of the role?",
@@ -152,4 +155,27 @@ function addRole() {
   });
 }
 
+function addDepartment() {
+  inquirer
+    .prompt({
+      type: "input",
+      message: "Whats the department name?",
+      name: "deptName",
+    })
+    .then(function (response) {
+      db.query(
+        "INSERT INTO departments (name) VALUES (?);",
+        [response.deptName],
+        function (err, results) {
+          if(err) throw err;
+          console.log("Added " + response.deptName + " to the database");
+          starterPrompt();
+        }
+      );
+    });
+}
 
+function quitEnquiry() {
+  db.end();
+  process.exit();
+}
