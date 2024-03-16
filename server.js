@@ -2,14 +2,20 @@ const mysql = require("mysql12");
 const inquirer = require("inquirer");
 const express = require("express");
 
+const PORT = process.env.PORT || 3001;
+const app = express();
+
+
 
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   database: 'staff',
   password: "",
-  });
-   
+});
+
+app.use(express.urlencoded({ extended: false}));
+app.use(express. json());
 
 db.connect((err) => {
   if (err) {
@@ -56,7 +62,7 @@ function starterPrompt() {
         case "Add Department":
           addDepartment();
         case "Quit":
-          Quit();
+          quitEnquiry();
           break;
       }
     });
@@ -102,40 +108,48 @@ function viewDepartments() {
     });
 }
 
+function addRole() {
+  const deptOptions = [];
+  db.query("SELECT * FROM departments;", function (err, results) {
+    if(err) throw err;
+    results.forEach((dept) => {
+      let deptOptions = {
+        name: dept.name,
+        value: dept.id,
+      };
+      deptOptions.push(deptOptions);
+    });
 
-function addEmployee() {
-  const listedPosition = ["1", "2", "3", "4"];
-  inquirer
-  .prompt([
-    {
-      name: "first_name",
-      type: "input",
-      messgae: "Whats the first name",
-    },
-    {
-      name: "last_name",
-      type: "input",
-      message: "Whats the last name",
-    },
-    {
-      name: "role_id",
-      type: "list",
-      message: "whats the the role of the employee",
-      choices: listedPosition
-    },
-  ])
-  then((data) => {
-    const query = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
- VALUES (?, ?, ?, ?);`;
-    db.query(
-      query,
-      [data.first_name, data.last_name, data.role_id, data.manager_id],
-      function (err, results) {
-        if (err) throw err;
-        console.table(results);
-        initialPrompt();
-      }
-    );
+    inquirer
+      starterPrompt([
+        {
+          type: "input",
+          message: "Whats the name of the role?",
+          name: "roleName",
+        },
+        {
+          type: "input",
+          message: "Whats the salary of the role?",
+          name: "salaryRole",
+        },
+        {
+          type: "list",
+          message: "What department is this role in?",
+          name: "departmentRole",
+          choices: deptOptions,
+        },
+      ])
+      .then(function (response) {
+        db.query(
+          `INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?);`,
+          [response.roleName, response.salaryRole, response.departmentRole],
+          function (err, results) {
+            console.log("Added " + response.roleName + " to the database");
+            starterPrompt();
+          }
+        );
+      });
   });
 }
+
 
