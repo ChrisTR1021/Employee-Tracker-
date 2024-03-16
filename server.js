@@ -48,8 +48,8 @@ function starterPrompt() {
         case "View Departments":
           viewDepartments();
           break;
-        case "Add New Employee":
-          newEmployee();
+        case "AddEmployee":
+          addEmployee();
           break;
         case "Add Role":
           addRole();
@@ -84,120 +84,58 @@ function viewEmployees() {
 }
 
   function viewRoles() {
-    let summon = "SELECT * FROM roles";
-    db.query(summon, function(err, res) {
+    db.query("SELECT * FROM roles", function(err, results) {
         if (err) throw err;
-        console.log("Viewing All Roles");
-        console.table(res);
-        inquirer.prompt([
-            {
-                type: 'list',
-                name: 'choice',
-                message: 'select an option.',
-                choices: [
-                    'Menu',
-                    'Quit'
-                ]
-            }
-        ])
-      })
-    }
-    then((answer)=>{
-      switch (answer.choices) {
-          case 'Menu':
-              start();
-              break;
-          case 'Quit':
-          quit();
-      }
-  })
-
-  function viewDepartments() {
-    const summon = "SELECT * FROM department";
-    db.query(summon, function(err, res) {
-        if (err) throw err;
-        console.log("Viewing All Departments");
-        console.table(res);
-        inquirer.prompt([
-            {
-                type: 'list',
-                name: 'choice',
-                message: 'select an option.',
-                choices: [
-                    'Menu',
-                    'Quit'
-                ]
-            }
-        ])
-       .then((answer) => {
-           switch (answer.choices){
-               case 'Menu':
-                   start();
-                   break;
-                   case 'Quit':
-                       quit();
-           }
-       })
-    })
-}
-function newEmployee() {
-  console.log('Hello! How are you?')
-  inquirer.prompt ([
-      {
-      type: 'input',
-      message: 'Enter employee first name.',
-      name: 'firstName'
-      },
-      {
-          type: 'input',
-          message: 'Enter employee last name.',
-          name: 'lastName'
-      },
-      {
-          type: 'input',
-          message: 'Enter employee ID number',
-          name: 'employeeID'
-      },
-      {
-          type: 'input',
-          message: 'Enter thier managers ID',
-          name: 'managerID'
-      }
-      
-  ])
-}
-then(function (response) {
-  connection.query('INSERT INTO employees(first_name, last_name, roles_id, manager_id) VALUES (?,?,?,?)', 
-  [response.FirstName, response.LastName, response.EmployeeID, response.ManagerID]), function(err,response) {
-      if (err) throw err;
-      console.table(res);
-      inquirer.prompt([
-          {
-              type: 'list',
-              name: 'choice',
-              message: 'select an option.',
-              choices: [
-                  'Menu',
-                  'Quit'
-              ]
-          }
-      ])
-     .then((answer) => {
-         switch (answer.choices){
-             case 'Menu':
-                 start();
-                 break;
-                 case 'Quit':
-                     quit();
-         }
-     })
+        console.table(results);
+        starterPrompt();
+    });
   }
-})
 
-function quit() {
-  console.log('Until Next Time');
-  process.exit();
-  
+
+function viewDepartments() {
+    db.query("SELECT * FROM departments", function(err, results) {
+      if (err) {
+        throw err;
+      }
+      console.table(results);
+      starterPrompt();
+    });
 }
 
-viewEmployees();
+
+function addEmployee() {
+  const listedPosition = ["1", "2", "3", "4"];
+  inquirer
+  .prompt([
+    {
+      name: "first_name",
+      type: "input",
+      messgae: "Whats the first name",
+    },
+    {
+      name: "last_name",
+      type: "input",
+      message: "Whats the last name",
+    },
+    {
+      name: "role_id",
+      type: "list",
+      message: "whats the the role of the employee",
+      choices: listedPosition
+    },
+  ])
+  then((data) => {
+    const query = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
+ VALUES (?, ?, ?, ?);`;
+    db.query(
+      query,
+      [data.first_name, data.last_name, data.role_id, data.manager_id],
+      function (err, results) {
+        if (err) throw err;
+        console.table(results);
+        initialPrompt();
+      }
+    );
+  });
+}
+
