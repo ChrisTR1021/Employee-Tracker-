@@ -1,23 +1,22 @@
+const mysql = require("mysql12");
 const inquirer = require("inquirer");
-const router = express.router("./index.js");
 const express = require("express");
-const db = require("./connection");
-const { connection } = require("./db");
-const mysql = require("");
-const { quit } = require("process");
 
 
-const connection = mysql.createConnection({
+const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   database: 'staff',
   password: "",
   });
    
-  module.exports = connection;
 
-db.connect(async function () {
-  starterPrompt();
+db.connect((err) => {
+  if (err) {
+    console.error("We couldn't connect you to the database, try again.");
+    return;
+  }
+    console.log("You're now connected to the database!");
 });
 
 function starterPrompt() {
@@ -38,8 +37,8 @@ function starterPrompt() {
         ],
       },
     ])
-    .then((answer) => {
-      switch (answer.choice) {
+    .then((response) => {
+      switch (response.choice) {
         case "View Employees":
           viewEmployees();
           break;
@@ -63,34 +62,26 @@ function starterPrompt() {
     });
 }
 function viewEmployees() {
-  const summon = "SELECT * FROM employees";
-  db.query(summon, function(err, res) {
-    if (err) throw err;
-    console.log("Viewing All Employees");
-    console.table(res);
-    inquirer.prompt([
-        {
-            type: 'list',
-            name: 'choices',
-            message: 'select an option.',
-            choices: [
-                'Menu',
-                'Quit'
-            ],
-        }
-      ])
-    })
-  }
-  then((answer) => {
-    switch (answer.choices) {
-        case 'Menu':
-            start();
-          break;
-          case 'Quit':
-              quituit();
-    }
-})
-  starterPrompt();
+  db.query(
+    `SELECT employees.id AS ID,
+      emplyees.first_name AS FIRSTNAME,
+      employees. last_name as LastName,
+      roles.title AS Title,
+      departments.name AS Department,
+      roles.salary AS Salary
+      FROM employees
+      JOIN roles
+      ON employees.role_id = roles.id
+      JOIN Departments
+      ON roles.department_id = departments.id`,
+      function (err, results) {
+        if (err) throw err;
+        console.log("\n");
+        console.table(results);
+        starterPrompt();
+      }
+  );
+}
 
   function viewRoles() {
     let summon = "SELECT * FROM roles";
